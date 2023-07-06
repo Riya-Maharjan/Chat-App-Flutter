@@ -14,7 +14,15 @@
       },
       "oauth_client": [
         {
-          "client_id": "367933160214-mu4r2n7agsa9dgb2s4ueg9n1n0s0l4hf.apps.googleusercontent.com",
+          "client_id": "367933160214-0f5n7npnr2gli75hf7otguj2fjcd15pq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chat_app",
+            "certificate_hash": "93963e6e78c9fe3d80ad30bf45b1767e1d0cf828"
+          }
+        },
+        {
+          "client_id": "367933160214-s7i21o9kg6p1g7ruv86me0env3530r23.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
@@ -29,6 +37,13 @@
             {
               "client_id": "367933160214-mu4r2n7agsa9dgb2s4ueg9n1n0s0l4hf.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "367933160214-6v9bsej4cbi6v5a2a0ul822uvekeg80p.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.chatApp.RunnerTests"
+              }
             }
           ]
         }

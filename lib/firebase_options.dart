@@ -25,7 +25,10 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       case TargetPlatform.macOS:
-        return macos;
+        throw UnsupportedError(
+          'DefaultFirebaseOptions have not been configured for macos - '
+          'you can reconfigure this by running the FlutterFire CLI again.',
+        );
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -66,17 +69,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '367933160214',
     projectId: 'messenger-1c5b3',
     storageBucket: 'messenger-1c5b3.appspot.com',
+    androidClientId: '367933160214-0f5n7npnr2gli75hf7otguj2fjcd15pq.apps.googleusercontent.com',
     iosClientId: '367933160214-t49463f6mmm1ja3ag69c7j94dobpu1c2.apps.googleusercontent.com',
     iosBundleId: 'com.example.chatApp',
-  );
-
-  static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCDBfDgS2Q3ptN6QTUzbEaGuShs0dovqss',
-    appId: '1:367933160214:ios:46c38484fb08350785ae37',
-    messagingSenderId: '367933160214',
-    projectId: 'messenger-1c5b3',
-    storageBucket: 'messenger-1c5b3.appspot.com',
-    iosClientId: '367933160214-6v9bsej4cbi6v5a2a0ul822uvekeg80p.apps.googleusercontent.com',
-    iosBundleId: 'com.example.chatApp.RunnerTests',
   );
 }
