@@ -10,7 +10,7 @@ class APIs {
   //access cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
 
-  static get user => auth.currentUser!;
+  static User get user => auth.currentUser!;
 
   //user exists or not
   static Future<bool> userExists() async {
@@ -22,16 +22,23 @@ class APIs {
   }
 
   //create new user
-  static Future<bool> createUser() async {
+  static Future<void> createUser() async {
+    final time = DateTime.now().millisecondsSinceEpoch.toString();
     final chatUser = ChatUser(
-        id: user.uid,
-        name: user.displayName.toString(),
-        email: user.email.toString());
+      id: user.uid,
+      name: user.displayName.toString(),
+      email: user.email.toString(),
+      about: "Hi, I am on Messenger",
+      image: user.photoURL.toString(),
+      createdAt: time,
+      isOnline: false,
+      lastActive: time,
+      pushToken: "",
+    );
 
-    return (await firestore
-            .collection('users')
-            .doc(auth.currentUser!.uid)
-            .get())
-        .exists;
+    return await firestore
+        .collection('users')
+        .doc(user.uid)
+        .set(chatUser.toJson());
   }
 }
