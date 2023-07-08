@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:chat_app/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -27,7 +28,14 @@ class _HomeScreenState extends State<HomeScreen> {
         title: const Text('Messenger App'),
         actions: [
           IconButton(onPressed: () {}, icon: const Icon(Icons.search)),
-          IconButton(onPressed: () {}, icon: const Icon(Icons.person))
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ProfileScreen(user: list[0])));
+              },
+              icon: const Icon(Icons.person))
         ],
       ),
       floatingActionButton: Padding(
