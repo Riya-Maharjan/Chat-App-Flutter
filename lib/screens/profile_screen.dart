@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:chat_app/helper/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
@@ -6,6 +7,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../api/apis.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
+import 'auth/login_screen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final ChatUser user;
@@ -27,8 +29,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
           child: FloatingActionButton.extended(
             backgroundColor: Colors.red[500],
             onPressed: () async {
-              await APIs.auth.signOut();
-              await GoogleSignIn().signOut();
+              Dialogs.showProgressBar(context);
+              await APIs.auth.signOut().then((value) async {
+                await GoogleSignIn().signOut().then((value) {
+                  //hiding progress dialog
+                  Navigator.pop(context);
+                  //moving to home screen
+                  Navigator.pop(context);
+                  //replacing home screen with login screen
+                  Navigator.pushReplacement(context,
+                      MaterialPageRoute(builder: (_) => LoginScreen()));
+                });
+              });
             },
             icon: const Icon(Icons.logout_rounded),
             label: Text('Logout'),
@@ -43,17 +55,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 width: mq.width,
                 height: mq.height * .04,
               ),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(mq.height * 0.1),
-                child: CachedNetworkImage(
-                  width: mq.height * 0.2,
-                  height: mq.height * 0.2,
-                  fit: BoxFit.fill,
-                  imageUrl: widget.user.image,
-                  // placeholder: (context, url) => const CircularProgressIndicator(),
-                  errorWidget: (context, url, error) =>
-                      const Icon(CupertinoIcons.person),
-                ),
+              Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * 0.1),
+                    child: CachedNetworkImage(
+                      width: mq.height * 0.2,
+                      height: mq.height * 0.2,
+                      fit: BoxFit.fill,
+                      imageUrl: widget.user.image,
+                      // placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(CupertinoIcons.person),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: 0,
+                    child: MaterialButton(
+                        onPressed: () {},
+                        color: Colors.white,
+                        shape: const CircleBorder(),
+                        child: Icon(Icons.edit, color: Colors.blue[300])),
+                  ),
+                ],
               ),
               SizedBox(
                 height: mq.height * .04,
