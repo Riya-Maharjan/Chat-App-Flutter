@@ -67,5 +67,12 @@
 	</dict>
 	</array>
 <!-- End of the Google Sign-in Section -->
+
+<key>NSPhotoLibraryUsageDescription</key>
+<string>App requires access to photo library for picking pictures.</string>
+<key>NSCameraUsageDescription</key>
+<string>App requires access to camera for taking picture</string>
+<key>NSMicrophoneUsageDescription</key>
+<string>App requires access to Microphone for taking audio</string>
 </dict>
 </plist>

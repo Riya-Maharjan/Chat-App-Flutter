@@ -24,7 +24,7 @@ class APIs {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
-        log('My Data: ${user.data()}');
+        // log('My Data: ${user.data()}');
       } else {
         await createUser().then((value) => getSelfInfo());
       }
