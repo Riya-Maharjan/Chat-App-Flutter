@@ -26,7 +26,7 @@ class _SplashScreenState extends State<SplashScreen> {
           const SystemUiOverlayStyle(systemNavigationBarColor: Colors.white));
 
       if (APIs.auth.currentUser != null) {
-        log('\nUser: ${APIs.auth.currentUser}');
+        // log('\nUser: ${APIs.auth.currentUser}');
         Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => const HomeScreen()));
       } else {

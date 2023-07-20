@@ -1,10 +1,12 @@
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/helper/dialogs.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:image_picker/image_picker.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
@@ -21,6 +23,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? _image;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -65,18 +69,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Stack(
                       children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.height * 0.1),
-                          child: CachedNetworkImage(
-                            width: mq.height * 0.2,
-                            height: mq.height * 0.2,
-                            fit: BoxFit.fill,
-                            imageUrl: widget.user.image,
-                            // placeholder: (context, url) => const CircularProgressIndicator(),
-                            errorWidget: (context, url, error) =>
-                                const Icon(CupertinoIcons.person),
-                          ),
-                        ),
+                        _image != null
+                            ? ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(mq.height * 0.1),
+                                child: Image.file(
+                                  File(_image!),
+                                  width: mq.height * 0.2,
+                                  height: mq.height * 0.2,
+                                  fit: BoxFit.cover,
+                                ),
+                              )
+                            : ClipRRect(
+                                borderRadius:
+                                    BorderRadius.circular(mq.height * 0.1),
+                                child: CachedNetworkImage(
+                                  width: mq.height * 0.2,
+                                  height: mq.height * 0.2,
+                                  fit: BoxFit.fill,
+                                  imageUrl: widget.user.image,
+                                  // placeholder: (context, url) => const CircularProgressIndicator(),
+                                  errorWidget: (context, url, error) =>
+                                      const Icon(CupertinoIcons.person),
+                                ),
+                              ),
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -191,7 +207,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             mq.width * .3,
                             mq.height * 0.15,
                           )),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        // Pick an image.
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.gallery);
+
+                        if (image != null) {
+                          log('Image Path: ${image.path} --- MimeType ${image.mimeType}');
+                          setState(() {
+                            _image = image.path;
+                          });
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        }
+                      },
                       child: Image.asset(
                         'images/gallery.png',
                         width: mq.width * 0.2,
@@ -205,7 +235,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             mq.width * .3,
                             mq.height * 0.15,
                           )),
-                      onPressed: () {},
+                      onPressed: () async {
+                        final ImagePicker picker = ImagePicker();
+                        log('picker called');
+                        // Pick an image.
+                        final XFile? image =
+                            await picker.pickImage(source: ImageSource.camera);
+                        log('Image: $image');
+                        if (image != null) {
+                          log('Image Path: ${image.path}');
+                          setState(() {
+                            _image = image.path;
+                          });
+                          // ignore: use_build_context_synchronously
+                          Navigator.pop(context);
+                        } else {
+                          log('I\'m lost');
+                        }
+                      },
                       child: Image.asset(
                         'images/camera.png',
                         width: mq.width * 0.2,

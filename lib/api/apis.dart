@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/chat_user.dart';
 
@@ -12,6 +13,9 @@ class APIs {
 
   //access cloud firestore database
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  //access cloud firestore storage
+  static FirebaseStorage storage = FirebaseStorage.instance;
 
   static User get user => auth.currentUser!;
 
@@ -24,7 +28,7 @@ class APIs {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
-        log('My Data: ${user.data()}');
+        // log('My Data: ${user.data()}');
       } else {
         await createUser().then((value) => getSelfInfo());
       }
