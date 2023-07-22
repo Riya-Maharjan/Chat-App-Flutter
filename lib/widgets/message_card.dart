@@ -41,9 +41,7 @@ class _MessageCardState extends State<MessageCard> {
                   topRight: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 )),
-            child: Text(
-                widget.message.msg +
-                    'Random messageRandom messageRandom messageRandom messageRandom messageRandom message',
+            child: Text(widget.message.msg,
                 style: const TextStyle(
                   fontSize: 16,
                   color: Colors.black87,
@@ -51,7 +49,7 @@ class _MessageCardState extends State<MessageCard> {
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: mq.width * 0.4),
+          padding: EdgeInsets.only(right: mq.width * 0.03),
           child: Text(widget.message.sent,
               style: const TextStyle(
                 fontSize: 13,
@@ -64,6 +62,58 @@ class _MessageCardState extends State<MessageCard> {
 
 //personal user message
   Widget _greenMessage() {
-    return Container();
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            // Padding(
+            //   padding: EdgeInsets.only(left: mq.width * 0.03),
+            //   child: Text(widget.message.sent,
+            //       style: const TextStyle(
+            //         fontSize: 13,
+            //         color: Colors.black54,
+            //       )),
+            // ),
+
+            SizedBox(
+              width: mq.width * .04,
+            ),
+            const Icon(
+              Icons.done_all_rounded,
+              color: Colors.blue,
+              size: 20,
+            ),
+            const SizedBox(
+              width: 2,
+            ),
+            Text('${widget.message.read} 12:02 PM',
+                style: const TextStyle(fontSize: 12, color: Colors.black54))
+          ],
+        ),
+        Flexible(
+          child: Container(
+            padding: EdgeInsets.all(mq.width * 0.04),
+            margin: EdgeInsets.symmetric(
+              horizontal: mq.width * .04,
+              vertical: mq.height * 0.01,
+            ),
+            decoration: BoxDecoration(
+                color: const Color.fromARGB(255, 218, 255, 176),
+                border: Border.all(color: Colors.greenAccent),
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(20),
+                  topRight: Radius.circular(20),
+                  bottomLeft: Radius.circular(20),
+                )),
+            child: Text(widget.message.msg,
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.black87,
+                )),
+          ),
+        ),
+      ],
+    );
   }
 }

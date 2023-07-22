@@ -30,6 +30,7 @@ class _ChatScreenState extends State<ChatScreen> {
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
+        backgroundColor: Colors.white,
         body: Column(
           children: [
             Expanded(
