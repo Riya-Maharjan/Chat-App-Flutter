@@ -8,6 +8,8 @@ import 'package:flutter/material.dart';
 import '../../api/apis.dart';
 import '../../main.dart';
 import '../../models/chat_user.dart';
+import '../../models/message.dart';
+import '../../widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
@@ -19,6 +21,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
+  List<Message> _list = [];
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -46,17 +49,31 @@ class _ChatScreenState extends State<ChatScreen> {
                       case ConnectionState.done:
                         final data = snapshot.data?.docs;
                         log('Data: ${jsonEncode(data![0].data())}');
+                        _list.clear();
+                        _list.add(Message(
+                            toId: 'person1',
+                            msg: 'Hi',
+                            read: '',
+                            type: Type.text,
+                            fromId: APIs.user.uid,
+                            sent: '12:00 AM'));
+                        _list.add(Message(
+                            toId: APIs.user.uid,
+                            msg: 'Hello',
+                            read: '',
+                            type: Type.text,
+                            fromId: 'person1',
+                            sent: '12:05 AM'));
                         // _list = data ?.map((e) => ChatUser.fromJson(e.data()))
                         //         .toList() ??
                         //     [];
-                        final _list = ['hi', 'Good morning'];
                         if (_list.isNotEmpty) {
                           return ListView.builder(
                               itemCount: _list.length,
                               padding: EdgeInsets.only(top: mq.height * 0.02),
                               physics: const BouncingScrollPhysics(),
                               itemBuilder: (context, index) {
-                                return Text("Messae: ${_list[index]}");
+                                return MessageCard(message: _list[index]);
                               });
                         } else {
                           return const Center(
