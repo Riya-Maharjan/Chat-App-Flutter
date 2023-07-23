@@ -1,6 +1,8 @@
 import 'dart:math';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/helper/my_date_util.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../api/apis.dart';
@@ -36,7 +38,9 @@ class _MessageCardState extends State<MessageCard> {
       children: [
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.04),
+            padding: EdgeInsets.all(widget.message.type == Type.image
+                ? mq.width * 0.025
+                : mq.width * 0.04),
             margin: EdgeInsets.symmetric(
               horizontal: mq.width * .04,
               vertical: mq.height * 0.01,
@@ -49,23 +53,40 @@ class _MessageCardState extends State<MessageCard> {
                   topRight: Radius.circular(20),
                   bottomRight: Radius.circular(20),
                 )),
-            child: Text(
-                MyDateUtil.getFormattedTime(
-                  context: context,
-                  time: widget.message.sent,
-                ),
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                )),
+            child: widget.message.type == Type.text
+                ? Text(widget.message.msg,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ))
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      // width: mq.height * 0.45,
+                      // height: mq.height * 0.35,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                      imageUrl: widget.message.msg,
+                      // placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.image, size: 70),
+                    ),
+                  ),
           ),
         ),
         Padding(
-          padding: EdgeInsets.only(right: mq.width * 0.03),
-          child: Text(widget.message.sent,
+          padding: EdgeInsets.only(right: mq.width * 0.025),
+          child: Text(
+              MyDateUtil.getFormattedTime(
+                context: context,
+                time: widget.message.sent,
+              ),
               style: const TextStyle(
-                fontSize: 13,
-                color: Colors.black54,
+                fontSize: 16,
+                color: Colors.black87,
               )),
         ),
       ],
@@ -99,7 +120,9 @@ class _MessageCardState extends State<MessageCard> {
         ),
         Flexible(
           child: Container(
-            padding: EdgeInsets.all(mq.width * 0.04),
+            padding: EdgeInsets.all(widget.message.type == Type.image
+                ? mq.width * 0.01
+                : mq.width * 0.04),
             margin: EdgeInsets.symmetric(
               horizontal: mq.width * .04,
               vertical: mq.height * 0.01,
@@ -112,11 +135,28 @@ class _MessageCardState extends State<MessageCard> {
                   topRight: Radius.circular(20),
                   bottomLeft: Radius.circular(20),
                 )),
-            child: Text(widget.message.msg,
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.black87,
-                )),
+            child: widget.message.type == Type.text
+                ? Text(widget.message.msg,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      color: Colors.black87,
+                    ))
+                : ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: CachedNetworkImage(
+                      // width: mq.height * 0.45,
+                      // height: mq.height * 0.35,
+                      fit: BoxFit.contain,
+                      placeholder: (context, url) =>
+                          const CircularProgressIndicator(
+                        strokeWidth: 2,
+                      ),
+                      imageUrl: widget.message.msg,
+                      // placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(Icons.image, size: 70),
+                    ),
+                  ),
           ),
         ),
       ],
