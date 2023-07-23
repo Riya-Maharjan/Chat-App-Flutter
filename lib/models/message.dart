@@ -7,6 +7,7 @@ class Message {
     required this.fromId,
     required this.sent,
   });
+
   late final String toId;
   late final String msg;
   late final String read;

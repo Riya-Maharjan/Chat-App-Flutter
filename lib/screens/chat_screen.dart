@@ -5,11 +5,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../api/apis.dart';
-import '../../main.dart';
-import '../../models/chat_user.dart';
-import '../../models/message.dart';
-import '../../widgets/message_card.dart';
+import '../api/apis.dart';
+import '../main.dart';
+import '../models/chat_user.dart';
+import '../models/message.dart';
+import '../widgets/message_card.dart';
 
 class ChatScreen extends StatefulWidget {
   final ChatUser user;
