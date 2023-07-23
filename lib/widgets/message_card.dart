@@ -28,7 +28,7 @@ class _MessageCardState extends State<MessageCard> {
   Widget _blueMessage() {
     if (widget.message.read.isEmpty) {
       APIs.updateMessageReadStatus(widget.message);
-      // log('Updated contet read');
+      // log('Updated content read');
     }
 
     return Row(
