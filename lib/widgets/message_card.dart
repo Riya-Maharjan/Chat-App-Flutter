@@ -65,9 +65,11 @@ class _MessageCardState extends State<MessageCard> {
                       // width: mq.height * 0.45,
                       // height: mq.height * 0.35,
                       fit: BoxFit.contain,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(
-                        strokeWidth: 2,
+                      placeholder: (context, url) => const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
                       ),
                       imageUrl: widget.message.msg,
                       // placeholder: (context, url) => const CircularProgressIndicator(),
@@ -147,9 +149,11 @@ class _MessageCardState extends State<MessageCard> {
                       // width: mq.height * 0.45,
                       // height: mq.height * 0.35,
                       fit: BoxFit.contain,
-                      placeholder: (context, url) =>
-                          const CircularProgressIndicator(
-                        strokeWidth: 2,
+                      placeholder: (context, url) => const Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                        ),
                       ),
                       imageUrl: widget.message.msg,
                       // placeholder: (context, url) => const CircularProgressIndicator(),
