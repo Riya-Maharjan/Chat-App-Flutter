@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../api/apis.dart';
+import '../helper/my_date_util.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
 import '../models/message.dart';
@@ -132,44 +133,64 @@ class _ChatScreenState extends State<ChatScreen> {
 
   Widget _appBar() {
     return InkWell(
-      onTap: () {},
-      child: Row(
-        children: [
-          IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, color: Colors.black54)),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(mq.height * 0.025),
-            child: CachedNetworkImage(
-              width: mq.height * 0.05,
-              height: mq.height * 0.05,
-              imageUrl: widget.user.image,
-              // placeholder: (context, url) => const CircularProgressIndicator(),
-              errorWidget: (context, url, error) =>
-                  const Icon(CupertinoIcons.person),
-            ),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(widget.user.name,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black54,
-                      fontWeight: FontWeight.w700)),
-              const SizedBox(width: 5),
-              const Text('Last Seen text',
-                  style: TextStyle(
-                    fontSize: 12,
-                    color: Colors.black45,
-                  ))
-            ],
-          )
-        ],
-      ),
-    );
+        onTap: () {},
+        child: StreamBuilder(
+            stream: APIs.getUserInfo(widget.user),
+            builder: (context, snapshot) {
+              final data = snapshot.data?.docs;
+              final list = data
+                      ?.map((e) =>
+                          ChatUser.fromJson(convertToObjectMap(e.data())))
+                      .toList() ??
+                  [];
+              return Row(
+                children: [
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon:
+                          const Icon(Icons.arrow_back, color: Colors.black54)),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * 0.025),
+                    child: CachedNetworkImage(
+                      width: mq.height * 0.05,
+                      height: mq.height * 0.05,
+                      imageUrl:
+                          list.isNotEmpty ? list[0].image : widget.user.image,
+                      // placeholder: (context, url) => const CircularProgressIndicator(),
+                      errorWidget: (context, url, error) =>
+                          const Icon(CupertinoIcons.person),
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(list.isNotEmpty ? list[0].name : widget.user.name,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black54,
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(width: 5),
+                      Text(
+                          list.isNotEmpty
+                              ? list[0].isOnline
+                                  ? 'Online'
+                                  : MyDateUtil.getLastActiveTime(
+                                      context: context,
+                                      lastActive: list[0].lastActive)
+                              : MyDateUtil.getLastActiveTime(
+                                  context: context,
+                                  lastActive: widget.user.lastActive),
+                          style: const TextStyle(
+                            fontSize: 12,
+                            color: Colors.black45,
+                          ))
+                    ],
+                  )
+                ],
+              );
+            }));
   }
 
   Widget _chatInput() {
@@ -269,5 +290,23 @@ class _ChatScreenState extends State<ChatScreen> {
         ],
       ),
     );
+  }
+
+  Map<String, dynamic> convertToObjectMap(Object? data) {
+    // First, check if the object is null or not an instance of Map
+    if (data == null || data is! Map) {
+      throw ArgumentError("Invalid input: data must be a non-null Map.");
+    }
+
+    // Cast the data to a Map<String, dynamic>
+    Map<dynamic, dynamic> dynamicMap = data as Map<dynamic, dynamic>;
+
+    // Convert keys and values to strings and dynamic respectively
+    Map<String, dynamic> resultMap = {};
+    dynamicMap.forEach((key, value) {
+      resultMap[key.toString()] = value;
+    });
+
+    return resultMap;
   }
 }

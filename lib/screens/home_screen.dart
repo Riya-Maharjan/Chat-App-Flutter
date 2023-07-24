@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:chat_app/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 import '../api/apis.dart';
@@ -28,6 +29,17 @@ class _HomeScreenState extends State<HomeScreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+//sets user status to active
+    APIs.updateActiveStatus(true);
+
+    //updates user active status as per lifecycle events : resume-> active or online   // pause-> inactive or offline
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      log('Message: $message ');
+
+      if (message.toString().contains('resume')) APIs.updateActiveStatus(true);
+      if (message.toString().contains('pause')) APIs.updateActiveStatus(false);
+      return Future.value(message);
+    });
   }
 
   @override
