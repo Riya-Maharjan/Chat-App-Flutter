@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:chat_app/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import '../models/chat_user.dart';
@@ -26,10 +27,29 @@ class APIs {
     return (await firestore.collection('users').doc(user.uid).get()).exists;
   }
 
+//for accessing firebase messaging (Push Notifications)
+  static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
+//for getting firebase messaging token
+  static Future<void> getFirebaseMessagingToken() async {
+    await fMessaging.requestPermission();
+
+    await fMessaging.getToken().then((t) {
+      if (t != null) {
+        me.pushToken = t;
+        log('Push Token: $t');
+      }
+    });
+  }
+
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then((user) async {
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
+        await getFirebaseMessagingToken();
+
+        //sets user status to active
+        APIs.updateActiveStatus(true);
         // log('My Data: ${user.data()}');
       } else {
         await createUser().then((value) => getSelfInfo());
@@ -100,7 +120,8 @@ class APIs {
   static Future<void> updateActiveStatus(bool isOnline) async {
     firestore.collection('users').doc(user.uid).update({
       'is_online': isOnline,
-      'last_active': DateTime.now().millisecondsSinceEpoch.toString()
+      'last_active': DateTime.now().millisecondsSinceEpoch.toString(),
+      'push_token': me.pushToken
     });
   }
 
