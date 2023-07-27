@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
 
@@ -6,6 +7,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:http/http.dart';
 
 import '../models/chat_user.dart';
 
@@ -40,6 +42,27 @@ class APIs {
         log('Push Token: $t');
       }
     });
+  }
+
+  static Future<void> sendPushNotification(
+      ChatUser chatUser, String msg) async {
+    try {
+      final body = {
+        "to": chatUser.pushToken,
+        "notification": {"title": chatUser.name, "body": msg}
+      };
+      var res = await post(Uri.parse('https://fcm.googleapis.com/fcm/send'),
+          headers: {
+            HttpHeaders.contentTypeHeader: 'application/json',
+            HttpHeaders.authorizationHeader:
+                'key=AAAAVaqGexY:APA91bEVX-hBOEWRUmecppx65XpWl6JqFCvd77iocG4jtbbn_xW-yvYs8BWvYuDWbV_5Vr4KZQ7q2xog1DIZSekb5ItSfjXmaF16OKQE0SJD2UaPi9VkrHROZ3xhnfCFwGDdBf7ZHfTF'
+          },
+          body: jsonEncode(body));
+      log('Response status: ${res.statusCode}');
+      log('Response body: ${res.body}');
+    } catch (e) {
+      log('\n Send Push Notification error: $e');
+    }
   }
 
   static Future<void> getSelfInfo() async {
@@ -158,7 +181,8 @@ class APIs {
         sent: time);
     final ref = firestore
         .collection('chats/${getConversationID(chatUser.id)}/messages/');
-    await ref.doc(time).set(message.toJson());
+    await ref.doc(time).set(message.toJson()).then((value) =>
+        sendPushNotification(chatUser, type == Type.text ? msg : 'Image'));
   }
 
   //update message read status
