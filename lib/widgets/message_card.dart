@@ -238,7 +238,11 @@ class _MessageCardState extends State<MessageCard> {
                   icon: const Icon(Icons.edit,
                       color: Colors.blueAccent, size: 28),
                   name: 'Edit Message',
-                  onTap: () {},
+                  onTap: () {
+                    Navigator.pop(context);
+
+                    _showMessageUpdateDialog();
+                  },
                 ),
               if (isMe)
                 _OptionItem(
@@ -273,6 +277,51 @@ class _MessageCardState extends State<MessageCard> {
             ],
           );
         });
+  }
+
+  void _showMessageUpdateDialog() {
+    String updatedMsg = widget.message.msg;
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 20, bottom: 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: const Row(
+                children: [
+                  Icon(Icons.message_rounded,
+                      color: Colors.blueAccent, size: 28),
+                  Text('Update Message')
+                ],
+              ),
+              content: TextFormField(
+                initialValue: updatedMsg,
+                maxLines: null,
+                onChanged: (value) => updatedMsg = value,
+                decoration: InputDecoration(
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.blue, fontSize: 16)),
+                ),
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    APIs.updateMessage(widget.message, updatedMsg);
+                  },
+                  child: const Text('Update',
+                      style: TextStyle(color: Colors.blue, fontSize: 16)),
+                )
+              ],
+            ));
   }
 }
 
