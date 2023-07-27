@@ -1,9 +1,10 @@
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:chat_app/helper/dialogs.dart';
 import 'package:chat_app/helper/my_date_util.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:gallery_saver/gallery_saver.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -210,7 +211,22 @@ class _MessageCardState extends State<MessageCard> {
                       icon: const Icon(Icons.download_rounded,
                           color: Colors.blueAccent, size: 28),
                       name: 'Save Image',
-                      onTap: () {},
+                      onTap: () async {
+                        try {
+                          log('Image URL: ${widget.message.msg}');
+                          await GallerySaver.saveImage(widget.message.msg,
+                                  albumName: ' Messenger Test')
+                              .then((success) {
+                            Navigator.pop(context);
+                            if (success != null && success) {
+                              Dialogs.showSnackbar(
+                                  context, 'Image Saved Successfully !!!');
+                            }
+                          });
+                        } catch (e) {
+                          log('Error while saving image: $e');
+                        }
+                      },
                     ),
               if (isMe)
                 Divider(

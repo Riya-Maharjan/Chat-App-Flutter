@@ -74,5 +74,9 @@
 <string>App requires access to camera for taking picture</string>
 <key>NSMicrophoneUsageDescription</key>
 <string>App requires access to Microphone for taking audio</string>
+
+<!-- For storing image into gallery -->
+<key>NSPhotoLibraryUsageDescription </key>
+<string>This ap requires read and write access to the photo library.</string>
 </dict>
 </plist>
