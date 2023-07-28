@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
+import 'package:chat_app/helper/dialogs.dart';
 import 'package:chat_app/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -113,9 +114,8 @@ class _HomeScreenState extends State<HomeScreen> {
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 10),
             child: FloatingActionButton(
-              onPressed: () async {
-                await APIs.auth.signOut();
-                await GoogleSignIn().signOut();
+              onPressed: () {
+                _addChatUserDialog();
               },
               child: const Icon(Icons.add_comment_rounded),
             ),
@@ -166,5 +166,58 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
+  }
+
+  void _addChatUserDialog() {
+    String email = '';
+
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              contentPadding: const EdgeInsets.only(
+                  left: 24, right: 24, top: 20, bottom: 10),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10)),
+              title: const Row(
+                children: [
+                  Icon(Icons.person_add_rounded,
+                      color: Colors.blueAccent, size: 28),
+                  Text('  Add User')
+                ],
+              ),
+              content: TextFormField(
+                maxLines: null,
+                onChanged: (value) => email = value,
+                decoration: InputDecoration(
+                    hintText: 'Enter User Email Id ',
+                    prefixIcon:
+                        const Icon(Icons.email, color: Colors.blueAccent),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(15))),
+              ),
+              actions: [
+                MaterialButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Cancel',
+                      style: TextStyle(color: Colors.blue, fontSize: 16)),
+                ),
+                MaterialButton(
+                  onPressed: () async {
+                    Navigator.pop(context);
+                    if (email.isNotEmpty) {
+                      await APIs.addChatUser(email).then((value) {
+                        if (!value) {
+                          Dialogs.showSnackbar(context, 'User doesn\'t exists');
+                        }
+                      });
+                    }
+                  },
+                  child: const Text('Add',
+                      style: TextStyle(color: Colors.blue, fontSize: 16)),
+                )
+              ],
+            ));
   }
 }
