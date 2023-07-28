@@ -140,10 +140,34 @@ class APIs {
         .set(chatUser.toJson());
   }
 
-  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers() {
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getAllUsers(
+      List<String> userIds) {
+    log('\nUserIds: $userIds');
+
     return firestore
         .collection('users')
-        .where('id', isNotEqualTo: user.uid)
+        .where('id',
+            whereIn: userIds.isEmpty
+                ? ['']
+                : userIds) //because empty list throws an error
+        .snapshots();
+  }
+
+  static Future<void> sendFirstMessage(
+      ChatUser chatUser, String msg, Type type) async {
+    await firestore
+        .collection('users')
+        .doc(chatUser.id)
+        .collection('my_users')
+        .doc(user.uid)
+        .set({}).then((value) => sendMessage(chatUser, msg, type));
+  }
+
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getMyUsersId() {
+    return firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('my_users')
         .snapshots();
   }
 
@@ -165,7 +189,7 @@ class APIs {
     });
     me.image = await ref.getDownloadURL();
     await firestore.collection('users').doc(user.uid).update({
-      'image': me.name,
+      'image': me.image,
     });
   }
 

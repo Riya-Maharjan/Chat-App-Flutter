@@ -1,17 +1,15 @@
-import 'dart:convert';
 import 'dart:developer';
 
-import 'package:chat_app/helper/dialogs.dart';
-import 'package:chat_app/screens/profile_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 
 import '../api/apis.dart';
+import '../helper/dialogs.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
 import '../widgets/chat_user_card.dart';
+import 'profile_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -122,45 +120,66 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           //dynamic and manages memory efficiently
           body: StreamBuilder(
-              stream: APIs.getAllUsers(),
+              stream: APIs.getMyUsersId(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   //if data is loading
                   case ConnectionState.waiting:
                   case ConnectionState.none:
-                    return const Center(
-                      child: CircularProgressIndicator(),
-                    );
+                  // return const Center(
+                  //   child: CircularProgressIndicator(),
+                  // );
 
                   //if some or all data is loaded then display
                   case ConnectionState.active:
                   case ConnectionState.done:
-                    final data = snapshot.data?.docs;
-                    _list = data
-                            ?.map((e) => ChatUser.fromJson(e.data()))
-                            .toList() ??
-                        [];
-                    if (_list.isNotEmpty) {
-                      return ListView.builder(
-                          itemCount:
-                              _isSearching ? _searchList.length : _list.length,
-                          padding: EdgeInsets.only(top: mq.height * 0.02),
-                          physics: const BouncingScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            return ChatUserCard(
-                                user: _isSearching
-                                    ? _searchList[index]
-                                    : _list[index]);
-                            // return Text("Name: ${list[index]}");
-                          });
-                    } else {
-                      return const Center(
-                          child: Text(
-                        'No Connections Found',
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.w500),
-                      ));
-                    }
+                    final dataList = snapshot.data?.docs;
+                    return StreamBuilder(
+                        stream: APIs.getAllUsers(
+                            dataList?.map((e) => e.id).toList() ?? []),
+                        builder: (context, snapshot) {
+                          switch (snapshot.connectionState) {
+                            //if data is loading
+                            case ConnectionState.waiting:
+                            case ConnectionState.none:
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+
+                            //if some or all data is loaded then display
+                            case ConnectionState.active:
+                            case ConnectionState.done:
+                              final data = snapshot.data?.docs;
+                              _list = data
+                                      ?.map((e) => ChatUser.fromJson(e.data()))
+                                      .toList() ??
+                                  [];
+                              if (_list.isNotEmpty) {
+                                return ListView.builder(
+                                    itemCount: _isSearching
+                                        ? _searchList.length
+                                        : _list.length,
+                                    padding:
+                                        EdgeInsets.only(top: mq.height * 0.02),
+                                    physics: const BouncingScrollPhysics(),
+                                    itemBuilder: (context, index) {
+                                      return ChatUserCard(
+                                          user: _isSearching
+                                              ? _searchList[index]
+                                              : _list[index]);
+                                      // return Text("Name: ${list[index]}");
+                                    });
+                              } else {
+                                return const Center(
+                                    child: Text(
+                                  'No Connections Found',
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w500),
+                                ));
+                              }
+                          }
+                        });
                 }
               }),
         ),
@@ -219,5 +238,23 @@ class _HomeScreenState extends State<HomeScreen> {
                 )
               ],
             ));
+  }
+
+  Map<String, dynamic> convertToObjectMap(Object? data) {
+    // First, check if the object is null or not an instance of Map
+    if (data == null || data is! Map) {
+      throw ArgumentError("Invalid input: data must be a non-null Map.");
+    }
+
+    // Cast the data to a Map<String, dynamic>
+    Map<dynamic, dynamic> dynamicMap = data as Map<dynamic, dynamic>;
+
+    // Convert keys and values to strings and dynamic respectively
+    Map<String, dynamic> resultMap = {};
+    dynamicMap.forEach((key, value) {
+      resultMap[key.toString()] = value;
+    });
+
+    return resultMap;
   }
 }
